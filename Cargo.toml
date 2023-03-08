@@ -1,8 +1,10 @@
 [package]
 name = "deno_native_certs"
+description = "deno-native-certs loads native certificate store into rustls"
 version = "0.1.0"
 edition = "2021"
 authors = ["Divy Srivastava <dj.srivastava23@gmail.com>"]
+license = "MIT"
 
 [[bin]]
 name = "deno_native_certs_test"

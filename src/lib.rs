@@ -8,7 +8,12 @@ pub struct Certificate(pub Vec<u8>);
 
 #[cfg(not(target_os = "macos"))]
 pub fn load_native_certs() -> Result<Vec<Certificate>, Error> {
-  Ok(rustls_native_certs::load_native_certs()?.map(|c| Certificate(c.0)))
+  Ok(
+    rustls_native_certs::load_native_certs()?
+      .into_iter()
+      .map(|c| Certificate(c.0))
+      .collect::<Vec<_>>(),
+  )
 }
 
 #[cfg(target_os = "macos")]

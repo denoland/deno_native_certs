@@ -50,5 +50,5 @@ jobs:
         run: cargo test --locked --release --all-targets --all-features
 
       - name: Test (macOS linking)
-        if: contains(matrix.os, 'ubuntu')
+        if: contains(matrix.os, 'macOS')
         run: ./test.ts

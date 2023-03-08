@@ -39,7 +39,7 @@ jobs:
       - name: Format
         if: contains(matrix.os, 'ubuntu')
         run: |
-          deno fmt --check
+          deno fmt --check --ignore=target/
           cargo fmt --all -- --check
 
       - name: Build

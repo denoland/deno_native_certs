@@ -1,0 +1,13 @@
+[package]
+name = "deno_native_certs"
+version = "0.1.0"
+edition = "2021"
+authors = ["Divy Srivastava <dj.srivastava23@gmail.com>"]
+
+[target.'cfg(not(target_os = "macos"))'.dependencies]
+rustls-native-certs = "0.6.2"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+dlopen = "0.1.8"
+dlopen_derive = "0.1.4"
+rustls-pemfile = "1.0.2"

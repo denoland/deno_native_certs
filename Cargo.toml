@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Divy Srivastava <dj.srivastava23@gmail.com>"]
 
+[[bin]]
+name = "deno_native_certs_test"
+path = "test_bin.rs"
+
 [target.'cfg(not(target_os = "macos"))'.dependencies]
 rustls-native-certs = "0.6.2"
 

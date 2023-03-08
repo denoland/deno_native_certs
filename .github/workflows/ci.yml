@@ -1,0 +1,54 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  rust:
+    name: deno_lint-${{ matrix.os }}
+    if: |
+      github.event_name == 'push' ||
+      !startsWith(github.event.pull_request.head.label, 'denoland:')
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        os: [macOS-latest, ubuntu-20.04-xl, windows-2019]
+
+    env:
+      CARGO_INCREMENTAL: 0
+      GH_ACTIONS: 1
+      RUST_BACKTRACE: full
+      RUSTFLAGS: -D warnings
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Format
+        if: contains(matrix.os, 'ubuntu')
+        run: |
+          deno fmt --check
+          cargo fmt --all -- --check
+
+      - name: Build
+        run: cargo build --locked --release --all-targets --all-features
+
+      - name: Test
+        run: cargo test --locked --release --all-targets --all-features
+
+      - name: Test (macOS linking)
+        if: contains(matrix.os, 'ubuntu')
+        run: ./test.ts

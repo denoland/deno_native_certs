@@ -1,6 +1,7 @@
 use crate::Certificate;
 use dlopen::symbor::{Container, Ref, SymBorApi, Symbol};
 use dlopen::Error as DlopenError;
+use once_cell::unsync::OnceCell;
 use std::collections::HashMap;
 use std::ffi::c_char;
 use std::ffi::c_void;
@@ -196,27 +197,32 @@ struct CoreFoundation<'a> {
   kCFAllocatorNull: Ref<'a, CFAllocatorRef>,
 }
 
-fn find_frameworks() -> Result<
-  (
-    Container<TrustSettings<'static>>,
-    Container<CoreFoundation<'static>>,
-  ),
-  DlopenError,
-> {
+type Frameworks = (
+  Container<TrustSettings<'static>>,
+  Container<CoreFoundation<'static>>,
+);
+
+fn find_frameworks() -> Result<Frameworks, DlopenError> {
   unsafe {
     Ok((
-            Container::load(
-                "/System/Library/Frameworks/Security.framework/Versions/Current/Security",
-            )?,
-            Container::load(
-                "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
-            )?,
-        ))
+      Container::load(
+        "/System/Library/Frameworks/Security.framework/Versions/Current/Security",
+      )?,
+      Container::load(
+        "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+      )?,
+    ))
   }
 }
 
 pub fn load_native_certs() -> Result<Vec<Certificate>, Error> {
-  let (framework, cf) = find_frameworks().unwrap();
+  let cell = OnceCell::new();
+  let (framework, cf) = cell.get_or_try_init(find_frameworks).map_err(|e| {
+    Error::new(
+      ErrorKind::Other,
+      format!("Failed to load frameworks: {}", e),
+    )
+  })?;
 
   let mut all_certs = HashMap::new();
 

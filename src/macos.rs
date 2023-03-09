@@ -4,7 +4,7 @@ use dlopen::Error as DlopenError;
 use std::collections::HashMap;
 use std::ffi::c_char;
 use std::ffi::c_void;
-use std::io::Error;
+use std::io::{Error, ErrorKind};
 use std::ptr;
 
 #[repr(C)]
@@ -231,7 +231,12 @@ pub fn load_native_certs() -> Result<Vec<Certificate>, Error> {
     } {
       errSecNoTrustSettings => continue,
       errSecSuccess => {}
-      _ => panic!("HUH"),
+      _ => {
+        return Err(Error::new(
+          ErrorKind::Other,
+          "SecTrustSettingsCopyCertificates",
+        ))
+      }
     };
 
     let certs: Array<OpaqueSecCertificateRef> = Array::new(array_ptr, &cf);

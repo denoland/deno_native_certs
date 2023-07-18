@@ -33,8 +33,9 @@ jobs:
         with:
           deno-version: v1.x
 
-      - name: Rust cache
-        uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Format
         if: contains(matrix.os, 'ubuntu')

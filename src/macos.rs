@@ -1,9 +1,10 @@
+#![allow(non_upper_case_globals)]
+
 use crate::Certificate;
-use dlopen::symbor::{Container, Ref, SymBorApi, Symbol};
-use dlopen::Error as DlopenError;
+use dlopen2::symbor::{Container, Ref, SymBorApi, Symbol};
+use dlopen2::Error as DlopenError;
 use once_cell::unsync::OnceCell;
 use std::collections::HashMap;
-use std::ffi::c_char;
 use std::ffi::c_void;
 use std::io::{Error, ErrorKind};
 use std::ptr;
@@ -126,11 +127,9 @@ const kSecTrustSettingsDomainSystem: SecTrustSettingsDomain = 2;
 
 type SecTrustSettingsResult = u32;
 
-const kSecTrustSettingsResultInvalid: SecTrustSettingsResult = 0;
 const kSecTrustSettingsResultTrustRoot: SecTrustSettingsResult = 1;
 const kSecTrustSettingsResultTrustAsRoot: SecTrustSettingsResult = 2;
 const kSecTrustSettingsResultDeny: SecTrustSettingsResult = 3;
-const kSecTrustSettingsResultUnspecified: SecTrustSettingsResult = 4;
 
 const errSecNoTrustSettings: OSStatus = -25263;
 const errSecSuccess: OSStatus = 0;
@@ -139,7 +138,7 @@ enum OpaqueSecCertificateRef {}
 type SecCertificateRef = *mut OpaqueSecCertificateRef;
 
 #[allow(non_snake_case)]
-#[derive(dlopen_derive::SymBorApi)]
+#[derive(dlopen2_derive::SymBorApi)]
 struct TrustSettings<'a> {
   // TrustSettings
   SecTrustSettingsCopyCertificates: Symbol<
@@ -163,7 +162,7 @@ type CFStringEncoding = u32;
 static kCFStringEncodingUTF8: CFStringEncoding = 0x08000100;
 
 #[allow(non_snake_case)]
-#[derive(dlopen_derive::SymBorApi)]
+#[derive(dlopen2_derive::SymBorApi)]
 struct CoreFoundation<'a> {
   // CFArray
   CFArrayGetValueAtIndex:

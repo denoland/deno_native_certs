@@ -5,6 +5,7 @@ version = "0.2.0"
 edition = "2021"
 authors = ["Divy Srivastava <dj.srivastava23@gmail.com>"]
 license = "MIT"
+repository = "https://github.com/denoland/deno_native_certs"
 
 [[bin]]
 name = "deno_native_certs_test"

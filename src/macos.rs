@@ -354,7 +354,7 @@ mod tests {
     let mut expected = rustls_native_certs::load_native_certs()
       .unwrap()
       .into_iter()
-      .map(|cert| cert.0)
+      .map(|cert| cert.to_vec())
       .collect::<Vec<_>>();
 
     actual.sort();

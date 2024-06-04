@@ -40,8 +40,14 @@ pub fn load_native_certs() -> Result<Vec<Certificate>, Error> {
     let f = File::open(&path)?;
     let mut f = BufReader::new(f);
 
-    match rustls_pemfile::certs(&mut f) {
-      Ok(contents) => Ok(contents.into_iter().map(Certificate).collect()),
+    let certs: Result<Vec<_>, _> = rustls_pemfile::certs(&mut f).collect();
+    match certs {
+      Ok(contents) => Ok(
+        contents
+          .into_iter()
+          .map(|c| Certificate(c.to_vec()))
+          .collect(),
+      ),
       Err(_) => Err(Error::new(
         ErrorKind::InvalidData,
         format!("Could not load PEM file {:?}", path),

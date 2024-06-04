@@ -1,4 +1,4 @@
-**deno-native-certs** loads native certificate store into rustls.
+The purpose of this crate is to improve Deno's startup time on MacOS.
 
 On macOS, certificates are loaded from the system keychain. The user, admin and
 system trust settings are merged together as documented by Apple. The Security

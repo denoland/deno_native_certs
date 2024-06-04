@@ -11,7 +11,7 @@ pub fn load_native_certs() -> Result<Vec<Certificate>, Error> {
   Ok(
     rustls_native_certs::load_native_certs()?
       .into_iter()
-      .map(|c| Certificate(c.0))
+      .map(|c| Certificate(c.to_vec()))
       .collect::<Vec<_>>(),
   )
 }
